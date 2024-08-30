@@ -6,6 +6,7 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -16,7 +17,13 @@ class PostController extends Controller
     {
         $posts = Post::all();
 
-        return view('index', $posts);
+        return view('index')->with('posts', $posts);
+    }
+
+    public function dashboard() {
+
+        $posts = Post::where('user_id', Auth::id())->with('comments')->get();
+        return view('dashboard')->with('posts', $posts);
     }
 
     /**
@@ -43,40 +50,41 @@ class PostController extends Controller
         $post->title = $request->input('title');
         $post->content = $request->input('content');
         $post->user_id = Auth::id();
+        $post->slug = Str::slug($request->input('title'));
 
         if (!$post->save()) {
             return Redirect::back()->withInput($request->all())->withErrors($request->errors());
         } else {
-            return Redirect::to('post')->with($post);
+            return Redirect::back()->with('post', $post);
         }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Post $id)
+    public function show($id)
     {
-        $post = Post::find($id)->with(['user', 'comments'])->get();
+        $post = Post::find($id);
 
-        return view('post', $post);
+        return view('post')->with('post', $post);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Post $id)
+    public function edit($id)
     {
-        $post = Post::find($id)->get();
+        $post = Post::where('id', $id)->get();
 
-        return view('editPost', $post);
+        return view('editPost')->with('post', $post);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Post $id)
+    public function update(Request $request, $id)
     {
-        $post = Post::find($id)->get();
+        $post = Post::where('id', $id)->get();
         $post->title = $request->input('title');
         $post->content = $request->input('content');
 
@@ -90,11 +98,11 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $id)
+    public function destroy($id)
     {
-        $post = Post::find($id)->first();
+        $post = Post::where('id', $id)->first();
         $post->delete();
 
-        return Redirect::to('index');
+        return Redirect::back();
     }
 }

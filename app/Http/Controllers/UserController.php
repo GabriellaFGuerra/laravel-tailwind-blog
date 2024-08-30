@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -16,7 +17,7 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $credentials = $request->validate([
             'name' => 'required',
             'email' => 'required|email',
             'password' => 'required|min:6|confirmed'
@@ -25,22 +26,23 @@ class UserController extends Controller
         $user = new User();
         $user->name = $request->input('name');
         $user->email = $request->input('email');
-        $user->password = $request->input('password');
+        $user->password = Hash::make($request->input('password'));
 
         if (!$user->save()) {
             return Redirect::back()->withInput($request->all())->withErrors($user->getErrors());
         } else {
-            Auth::login($user);
+            Auth::attempt($credentials);
+            $request->session()->regenerate();
             return Redirect::to('/');
         }
     }
 
-    public function show(string $id)
+    public function show()
     {
-        if (Auth::id() == $id) {
-            $user = User::find(Auth::id())->get();
+        if (Auth::check()) {
+            $user = User::where('id', Auth::id())->first();
 
-            return view('user', $user);
+            return view('profile')->with('user', $user);
         } else {
             return Redirect::back()->withErrors([
                 'error' => 'You are not authorized to view this user'

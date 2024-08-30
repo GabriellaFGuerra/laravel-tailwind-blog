@@ -13,11 +13,11 @@ class CommentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, Post $post)
+    public function store(Request $request, $post)
     {
         $comment = new Comment();
         $comment->comment = $request->input('comment');
-        $comment->post_id = $post;
+        $comment->post_id = $request->input('post_id');
         $comment->user_id = Auth::id();
         $comment->save();
 
@@ -27,7 +27,7 @@ class CommentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Comment $comment)
+    public function update(Request $request, $comment)
     {
         $comment = Comment::find($comment);
         $comment->comment = $request->input('comment');
@@ -39,7 +39,7 @@ class CommentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Comment $comment)
+    public function destroy($comment)
     {
         Comment::find($comment)->first()->delete();
         return Redirect::back();

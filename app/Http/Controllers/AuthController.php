@@ -6,9 +6,15 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    public function login_form()
+    {
+        return view('login');
+    }
+
     public function login(Request $request)
     {
         $request->validate([
@@ -16,17 +22,26 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        $user = User::findBy('email', $request->input('email'));
+        $user = User::where('email', $request->input('email'))->first();
 
-        if (!$user || !$user->checkPassword($request->input('password'))) {
-            return Redirect::back()->withInput($request->all())->withErrors([
-                'email' => 'Invalid email or password'
+        if (!$user) {
+            return Redirect::back()->withErrors([
+                'email' => 'Invalid email'
             ]);
-        } else {
-            Auth::login($user);
-            return Redirect::to('/');
         }
+
+        if (!Hash::check($request->input('password'), $user->password)) {
+            return Redirect::back()->withErrors([
+                'password' => 'Invaild password'
+            ]);
+        }
+
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        return Redirect::to('/');
     }
+
 
     public function logout()
     {
