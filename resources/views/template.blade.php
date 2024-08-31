@@ -28,7 +28,7 @@
             </div>
         </nav>
 
-        <div class="container">
+        <div class="container p-4 mx-auto">
             @yield('content')
         </div>
         <footer class="fixed bottom-0 left-0 p-4 w-full text-center bg-gray-800">
