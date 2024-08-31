@@ -25,6 +25,11 @@
                         <p class="text-xs italic text-red-500">{{ $message }}</p>
                     @enderror
                 </div>
+                <div class="mb-6">
+                    <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="{{ route('register') }}">
+                        Don't have an account? Register
+                    </a>
+                </div>
                 <div class="flex justify-between items-center">
                     <button class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline" type="submit">
                         Login
@@ -39,5 +44,5 @@
         </div>
     </div>
 </div>
-    
+
 @endsection

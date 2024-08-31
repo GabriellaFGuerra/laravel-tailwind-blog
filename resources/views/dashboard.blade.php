@@ -10,7 +10,12 @@
         </div>
         <div class="p-6 bg-white rounded-lg shadow-md">
             <h2 class="mb-4 text-xl font-bold">Total Comments</h2>
-            <p class="text-lg text-gray-700">0</p>
+            <p class="text-lg text-gray-700">{{ $posts->count('comments') }}</p>
+        </div>
+
+        <div class="p-6 bg-white rounded-lg shadow-md">
+            <h2 class="mb-4 text-xl font-bold">Write a new post</h2>
+            <p class="text-lg"><a class="text-blue-500 hover:text-blue-700" href="{{ route('post.create') }}">New Post</a></p>
         </div>
     </div>
     <div class="mt-6">

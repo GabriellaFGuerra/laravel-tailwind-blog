@@ -15,16 +15,22 @@
                     <p>{{ $comment->comment }}</p>
                 </div>
             @endforeach
-            <form action="{{ route('post.comment', $post->id) }}" method="post">
-                @csrf
-                <input type="hidden" name="post_id" value="{{ $post->id }}">
-                <div class="mb-4">
-                    <label for="comment" class="block mb-2 font-bold text-gray-700">Leave a comment</label>
-                    <textarea name="comment" id="comment"
-                        class="block px-3 py-2 mt-1 w-full text-sm bg-white rounded-md border shadow-sm"></textarea>
+            @if (Auth::check())
+                <form action="{{ route('post.comment', $post->id) }}" method="post">
+                    @csrf
+                    <input type="hidden" name="post_id" value="{{ $post->id }}">
+                    <div class="mb-4">
+                        <label for="comment" class="block mb-2 font-bold text-gray-700">Leave a comment</label>
+                        <textarea name="comment" id="comment"
+                            class="block px-3 py-2 mt-1 w-full text-sm bg-white rounded-md border shadow-sm"></textarea>
                     </div>
-                    <button type="submit" class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline">Comment</button>
+                    <button type="submit"
+                        class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline">Comment</button>
                 </form>
-            </div>
+            @else
+                <p>Please <a class="text-blue-500 hover:underline hover:text-blue-700" href="{{ route('login') }}">login</a>
+                    or <a class="text-blue-500 hover:underline hover:text-blue-700" href="{{ route('register') }}">register</a> to leave a comment</p>
+            @endif
         </div>
+    </div>
 @endsection

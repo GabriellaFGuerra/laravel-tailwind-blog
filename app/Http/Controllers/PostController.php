@@ -20,7 +20,8 @@ class PostController extends Controller
         return view('index')->with('posts', $posts);
     }
 
-    public function dashboard() {
+    public function dashboard()
+    {
 
         $posts = Post::where('user_id', Auth::id())->with('comments')->get();
         return view('dashboard')->with('posts', $posts);
@@ -74,7 +75,7 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        $post = Post::where('id', $id)->get();
+        $post = Post::where('id', $id)->first();
 
         return view('editPost')->with('post', $post);
     }
@@ -84,14 +85,15 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $post = Post::where('id', $id)->get();
+        $post = Post::where('id', $id)->first();
         $post->title = $request->input('title');
         $post->content = $request->input('content');
 
         if (!$post->save()) {
             return Redirect::back()->withInput($request->all())->withErrors($request->errors());
         } else {
-            return Redirect::to('post')->with($post);
+            $posts = Post::where('user_id', Auth::id())->with('comments')->get();
+            return view('dashboard')->with('posts', $posts);
         }
     }
 
